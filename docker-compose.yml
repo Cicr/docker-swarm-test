@@ -1,0 +1,19 @@
+# docker-compose.yml
+version: '3.8' # Specify the Docker Compose file format version
+
+services:
+  web:
+    # Build the image from the Dockerfile in the current context ('.')
+    # Dokploy should handle building this image before deployment.
+    build: .
+    image: my-simple-web-app:latest # Name for your custom image
+    ports:
+      - "80:80" # Map host port 80 to container port 80
+    deploy:
+      replicas: 5 # Configure Docker Swarm to run 5 instances of this service
+      restart_policy:
+        condition: on-failure # Restart if the container fails
+      update_config: # Configuration for rolling updates/scaling
+        parallelism: 1 # Update/scale one replica at a time
+        delay: 5s      # Wait 5 seconds between operations
+        order: start-first # Start new container before stopping old one
